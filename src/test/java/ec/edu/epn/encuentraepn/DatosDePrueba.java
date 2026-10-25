@@ -53,14 +53,26 @@ public final class DatosDePrueba {
         return reporte;
     }
 
+    /**
+     * Reporte de un objeto encontrado de la categoría y la zona indicadas.
+     */
+    public static Reporte reporteDe(String categoria, String zona) {
+        return reporteEncontrado(new Usuario("Bruno Salas", "bruno.salas@epn.edu.ec"), "Objeto encontrado",
+                categoria, zona);
+    }
+
     private static Reporte reporteEncontrado(Usuario encontrante) {
         return reporteEncontrado(encontrante, "Calculadora científica negra");
     }
 
     private static Reporte reporteEncontrado(Usuario encontrante, String descripcion) {
+        return reporteEncontrado(encontrante, descripcion, "Calculadoras", Campus.ZONA_CENTRO);
+    }
+
+    private static Reporte reporteEncontrado(Usuario encontrante, String descripcion, String categoria, String zona) {
         DatosReporte datos = new DatosReporte(TipoReporte.ENCONTRADO, null, descripcion,
                 LocalDate.of(2026, 9, 28), -0.21045, -78.48920, List.of("¿Qué iniciales tiene detrás?"));
-        return new Reporte(datos, encontrante, new Categoria("Calculadoras"),
-                new Ubicacion(-0.21045, -78.48920, Campus.ZONA_CENTRO));
+        return new Reporte(datos, encontrante, new Categoria(categoria),
+                new Ubicacion(-0.21045, -78.48920, zona));
     }
 }
