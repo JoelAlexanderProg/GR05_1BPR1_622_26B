@@ -9,6 +9,10 @@
 
 <%-- aplicarFiltros(filtros) --%>
 <form class="filtros" method="get" action="${ctx}/reportes">
+    <%-- HU-12: búsqueda por palabra clave --%>
+    <label>Palabra clave
+        <input type="search" id="palabra" name="palabra" value="<c:out value='${param.palabra}'/>" placeholder="Ej.: mochila">
+    </label>
     <label>Tipo
         <select name="tipo">
             <option value="">Todos</option>

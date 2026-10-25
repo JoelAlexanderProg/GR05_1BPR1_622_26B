@@ -1,5 +1,6 @@
 // Casos de prueba del Incremento 4 (Prueba 1): comprueban en el navegador los escenarios de los criterios
-// de aceptación de las historias HU-11, HU-12 y HU-13, con dos sesiones (Bruno Salas y Andrea Paz).
+// de aceptación de las historias HU-11 (CP-06), HU-12 (CP-07) y HU-13 (CP-08), con dos sesiones
+// (Bruno Salas y Andrea Paz).
 //
 // Uso:      npm install puppeteer-core
 //           node casos-incremento-4.js <carpeta de capturas> [URL base] [--solo-datos]
@@ -137,6 +138,12 @@ const filaDe = (page, tabla, descripcion) => page.$$eval(`${tabla} tbody tr`, (f
   return fila ? fila.innerText : '';
 }, descripcion);
 
+async function buscar(page, palabra) {
+  await ir(page, '/reportes');
+  await page.type('#palabra', palabra);
+  await enviar(page, 'form.filtros button[type="submit"]');
+}
+
 const descripcionesEnMapa = (page) => page.$$eval('#resultados li a', (enlaces) =>
   enlaces.map((a) => a.textContent.replace(/\s+/g, ' ').trim()));
 
@@ -170,6 +177,27 @@ const descripcionesEnMapa = (page) => page.$$eval('#resultados li a', (enlaces) 
     return;
   }
 
+  // ------------------------------------------------------------------ CP-07 · HU-12
+  caso('CP-07', 'HU-12 Buscar reportes por palabra clave');
+  await buscar(a, 'mochila');
+  let mapa = await descripcionesEnMapa(a);
+  await captura(a, 'cp07-1-buscar-mochila.png');
+  paso(1, 'Al buscar «mochila» el mapa muestra solo la mochila',
+    mapa.length === 1 && mapa[0].includes(MOCHILA));
+
+  await buscar(a, 'paraguas');
+  const sinResultados = await textoDe(a, 'main');
+  await captura(a, 'cp07-2-buscar-paraguas.png');
+  paso(2, 'Al buscar «paraguas» se muestra «No hay reportes activos que cumplan los filtros.»',
+    (await descripcionesEnMapa(a)).length === 0
+    && sinResultados.includes('No hay reportes activos que cumplan los filtros.'));
+
+  await buscar(a, 'CAMARA');
+  mapa = await descripcionesEnMapa(a);
+  await captura(a, 'cp07-3-buscar-camara.png');
+  paso(3, 'Al buscar «CAMARA», en mayúsculas y sin tilde, el mapa muestra la cámara',
+    mapa.length === 1 && mapa[0].includes(CAMARA));
+
   // ------------------------------------------------------------------ CP-06 · HU-11
   caso('CP-06', 'HU-11 Retirar un reporte propio');
   await ir(b, '/inicio');
@@ -190,7 +218,7 @@ const descripcionesEnMapa = (page) => page.$$eval('#resultados li a', (enlaces) 
   const filaMochila = await filaDe(b, '#misReportes', MOCHILA);
   await captura(b, 'cp06-2-reporte-retirado.png');
   await ir(b, '/reportes');
-  const mapa = await descripcionesEnMapa(b);
+  mapa = await descripcionesEnMapa(b);
   await captura(b, 'cp06-3-mapa-sin-mochila.png');
   paso(1, 'Al retirar la mochila queda «Retirado» y ya no aparece en el mapa',
     filaMochila.includes('Retirado') && !mapa.some((d) => d.includes(MOCHILA))

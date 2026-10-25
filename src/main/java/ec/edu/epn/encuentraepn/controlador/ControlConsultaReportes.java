@@ -67,7 +67,12 @@ public class ControlConsultaReportes extends ControlBase {
     public List<Reporte> consultarReportes(FiltrosReporte filtros) {
         // SEC-02 · 3-4: consultar reportes activos [lectura]
         // SEC-02 · 10-11: consultar por tipo, categoría, fecha y zona [lectura]
-        return reporteDAO.consultarActivos(filtros);
+        List<Reporte> reportes = reporteDAO.consultarActivos(filtros);
+        if (filtros.palabra() == null) {
+            return reportes;
+        }
+        // HU-12: búsqueda por palabra clave, sin distinguir mayúsculas, tildes ni espacios sobrantes
+        return reportes.stream().filter(reporte -> reporte.contienePalabra(filtros.palabra())).toList();
     }
 
     public DatosPublicos consultarDetallePublico(UUID idReporte) {
@@ -97,6 +102,12 @@ public class ControlConsultaReportes extends ControlBase {
                 leerIdOpcional(request.getParameter("categoria")),
                 leerFecha(request.getParameter("desde")),
                 leerFecha(request.getParameter("hasta")),
-                Campus.buscarZona(request.getParameter("zona")));
+                Campus.buscarZona(request.getParameter("zona")),
+                leerPalabra(request.getParameter("palabra")));
+    }
+
+    /** Palabra clave escrita en el buscador, o null si está vacía. */
+    private String leerPalabra(String valor) {
+        return valor == null || valor.isBlank() ? null : valor.trim();
     }
 }
