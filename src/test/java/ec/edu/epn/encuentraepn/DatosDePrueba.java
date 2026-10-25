@@ -34,10 +34,22 @@ public final class DatosDePrueba {
      * Reclamación recién registrada (PENDIENTE) sobre un objeto que registró el encontrante indicado.
      */
     public static Reclamacion reclamacionPendiente(Usuario encontrante) {
+        return new Reclamacion(new Usuario("Andrea Paz", "andrea.paz@epn.edu.ec"), reporteEncontrado(encontrante));
+    }
+
+    /**
+     * Reporte publicado (ACTIVO) de la calculadora que encontró Bruno Salas.
+     */
+    public static Reporte reporteActivo() {
+        Reporte reporte = reporteEncontrado(new Usuario("Bruno Salas", "bruno.salas@epn.edu.ec"));
+        reporte.publicar();
+        return reporte;
+    }
+
+    private static Reporte reporteEncontrado(Usuario encontrante) {
         DatosReporte datos = new DatosReporte(TipoReporte.ENCONTRADO, null, "Calculadora científica negra",
                 LocalDate.of(2026, 9, 28), -0.21045, -78.48920, List.of("¿Qué iniciales tiene detrás?"));
-        Reporte reporte = new Reporte(datos, encontrante, new Categoria("Calculadoras"),
+        return new Reporte(datos, encontrante, new Categoria("Calculadoras"),
                 new Ubicacion(-0.21045, -78.48920, Campus.ZONA_CENTRO));
-        return new Reclamacion(new Usuario("Andrea Paz", "andrea.paz@epn.edu.ec"), reporte);
     }
 }

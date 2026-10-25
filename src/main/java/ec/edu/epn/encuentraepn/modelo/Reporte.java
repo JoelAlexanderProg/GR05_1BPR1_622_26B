@@ -98,6 +98,12 @@ public class Reporte {
         fechaDevolucion = fecha;
     }
 
+    /**
+     * HU-11: quien registró el reporte lo retira y deja de aparecer en el mapa.
+     */
+    public void retirar() {
+    }
+
     private void exigirEstado(EstadoReporte esperado) {
         if (estado != esperado) {
             throw new IllegalStateException("El reporte debe estar en estado " + esperado + " y está " + estado);
