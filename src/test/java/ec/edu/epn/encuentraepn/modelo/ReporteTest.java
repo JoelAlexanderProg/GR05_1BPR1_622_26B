@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static ec.edu.epn.encuentraepn.DatosDePrueba.reporteActivo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Incremento 4: pruebas de las reglas nuevas de la entidad Reporte (HU-11 Retirar un reporte propio).
+ * Incremento 4: pruebas de las reglas nuevas de la entidad Reporte
+ * (HU-11 Retirar un reporte propio y HU-12 Buscar reportes por palabra clave).
  */
 class ReporteTest {
 
@@ -30,5 +33,14 @@ class ReporteTest {
 
         assertThrows(IllegalStateException.class, reporte::retirar);
         assertEquals(EstadoReporte.RESERVADO, reporte.getEstado());
+    }
+
+    @Test
+    @DisplayName("Una palabra que está en la descripción coincide y otra que no está, no")
+    void unaPalabraDeLaDescripcionCoincide() {
+        Reporte reporte = reporteActivo();   // «Calculadora científica negra»
+
+        assertTrue(reporte.contienePalabra("negra"));
+        assertFalse(reporte.contienePalabra("paraguas"));
     }
 }

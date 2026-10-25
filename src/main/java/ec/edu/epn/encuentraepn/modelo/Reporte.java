@@ -103,6 +103,13 @@ public class Reporte {
     }
 
     /**
+     * HU-12: indica si la descripción del reporte contiene la palabra buscada.
+     */
+    public boolean contienePalabra(String palabra) {
+        return false;
+    }
+
+    /**
      * Pasa del estado esperado al nuevo. Si el reporte está en otro estado, lanza IllegalStateException.
      */
     private void cambiarEstado(EstadoReporte desde, EstadoReporte hacia) {
