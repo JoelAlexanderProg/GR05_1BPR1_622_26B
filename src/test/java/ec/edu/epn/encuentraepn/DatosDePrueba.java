@@ -41,13 +41,24 @@ public final class DatosDePrueba {
      * Reporte publicado (ACTIVO) de la calculadora que encontró Bruno Salas.
      */
     public static Reporte reporteActivo() {
-        Reporte reporte = reporteEncontrado(new Usuario("Bruno Salas", "bruno.salas@epn.edu.ec"));
+        return reporteActivo("Calculadora científica negra");
+    }
+
+    /**
+     * Reporte publicado (ACTIVO) de un objeto que encontró Bruno Salas, con la descripción indicada.
+     */
+    public static Reporte reporteActivo(String descripcion) {
+        Reporte reporte = reporteEncontrado(new Usuario("Bruno Salas", "bruno.salas@epn.edu.ec"), descripcion);
         reporte.publicar();
         return reporte;
     }
 
     private static Reporte reporteEncontrado(Usuario encontrante) {
-        DatosReporte datos = new DatosReporte(TipoReporte.ENCONTRADO, null, "Calculadora científica negra",
+        return reporteEncontrado(encontrante, "Calculadora científica negra");
+    }
+
+    private static Reporte reporteEncontrado(Usuario encontrante, String descripcion) {
+        DatosReporte datos = new DatosReporte(TipoReporte.ENCONTRADO, null, descripcion,
                 LocalDate.of(2026, 9, 28), -0.21045, -78.48920, List.of("¿Qué iniciales tiene detrás?"));
         return new Reporte(datos, encontrante, new Categoria("Calculadoras"),
                 new Ubicacion(-0.21045, -78.48920, Campus.ZONA_CENTRO));

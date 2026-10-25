@@ -2,6 +2,8 @@ package ec.edu.epn.encuentraepn.modelo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static ec.edu.epn.encuentraepn.DatosDePrueba.reporteActivo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,5 +44,24 @@ class ReporteTest {
 
         assertTrue(reporte.contienePalabra("negra"));
         assertFalse(reporte.contienePalabra("paraguas"));
+    }
+
+    /**
+     * Prueba con parámetros: cada fila es una forma de escribir la palabra buscada.
+     * Las comillas simples conservan los espacios.
+     */
+    @ParameterizedTest(name = "{2}: «{0}» → {1}")
+    @CsvSource({
+            "cámara,       true,  minúsculas",
+            "CAMARA,       true,  mayúsculas y sin tilde",
+            "camara,       true,  sin tilde",
+            "'  Cámara  ', true,  espacios sobrantes",
+            "paraguas,     false, palabra que no está"
+    })
+    @DisplayName("La búsqueda no distingue mayúsculas, tildes ni espacios sobrantes")
+    void laBusquedaNoDistingueMayusculasTildesNiEspacios(String palabra, boolean coincide, String caso) {
+        Reporte reporte = reporteActivo("Cámara Canon en estuche gris");
+
+        assertEquals(coincide, reporte.contienePalabra(palabra));
     }
 }
