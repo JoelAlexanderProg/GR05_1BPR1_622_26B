@@ -30,6 +30,9 @@ import java.util.UUID;
 @WebServlet("/reportes/nuevo")
 public class ControlRegistroReporte extends ControlBase {
 
+    /** Motivo con el que se rechazan las reclamaciones pendientes de un reporte retirado (HU-11). */
+    public static final String MOTIVO_RETIRO = "El reporte fue retirado por su autor.";
+
     private final ReporteDAO reporteDAO;
     private final CategoriaDAO categoriaDAO = new CategoriaDAO();
     private final ReclamacionDAO reclamacionDAO;
@@ -117,7 +120,7 @@ public class ControlRegistroReporte extends ControlBase {
         }
         reporte.retirar();
         for (Reclamacion reclamacion : reclamacionDAO.listarPendientes(reporte)) {
-            reclamacion.rechazar("El reporte fue retirado por su autor.");
+            reclamacion.rechazar(MOTIVO_RETIRO);
         }
         // El retiro y los rechazos se guardan en una sola transacción
         reporteDAO.actualizar(reporte);

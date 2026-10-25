@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static ec.edu.epn.encuentraepn.DatosDePrueba.reclamacionPendiente;
+import static ec.edu.epn.encuentraepn.controlador.ControlRegistroReporte.MOTIVO_RETIRO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,6 +51,6 @@ class ControlRegistroReporteTest {
         verify(reporteDAO).actualizar(reporte);
         assertEquals(EstadoReporte.RETIRADO, reporte.getEstado());
         assertEquals(EstadoReclamacion.RECHAZADA, pendiente.getEstado());
-        assertEquals("El reporte fue retirado por su autor.", pendiente.getMotivoRechazo());
+        assertEquals(MOTIVO_RETIRO, pendiente.getMotivoRechazo());
     }
 }
