@@ -13,6 +13,9 @@ Prueba 1 de Metodologías Ágiles (ISWD622, EPN, 2026-B), Grupo 5: aplicación d
 | 2 | CU-03 Reclamar un objeto encontrado | `ControlReclamaciones` | `formularioReclamacion.jsp` |
 | 2 | CU-04 Gestionar devolución del objeto | `ControlDevoluciones` | `panelDevolucion.jsp`, `vistaAcuerdoEntrega.jsp` |
 | 3 | Rechazar una reclamación (Práctica 2, desarrollado con TDD) | `ControlDevoluciones` | `panelDevolucion.jsp`, `inicio.jsp` |
+| 4 | HU-11 Retirar un reporte propio (Prueba 1) | `ControlRegistroReporte` | `inicio.jsp` |
+| 4 | HU-12 Buscar reportes por palabra clave (Prueba 1) | `ControlConsultaReportes` | `mapaReportes.jsp` |
+| 4 | HU-13 Ver estadísticas de los objetos reportados (Prueba 1) | `ControlEstadisticas` | `estadisticas.jsp` |
 
 ## Trazabilidad de los modelos al código
 
@@ -55,10 +58,36 @@ src/main/webapp/
 └── lib/leaflet/      librería del mapa
 src/test/java/        pruebas unitarias (JUnit 5 y Mockito)
 docs/modelos/         diagramas de clases y de secuencia del diseño
-pruebas/              casos de prueba automatizados en el navegador (CP-01A a CP-05)
+docs/historias/       historias de usuario del Incremento 4: tarjeta, criterios, tareas y pruebas de aceptación
+pruebas/              casos de prueba automatizados en el navegador (CP-01A a CP-08)
+jenkins/              imagen de Jenkins del grupo: plugins y configuración como código
+Dockerfile            imagen de la aplicación (Tomcat 10.1 con el WAR)
+Jenkinsfile           pipeline de integración continua
 ```
 
-## Cómo ejecutar
+## Despliegue con Docker
+
+Solo se necesita Docker. La imagen publicada en Docker Hub es [joelalexanderp/encuentraepn](https://hub.docker.com/r/joelalexanderp/encuentraepn):
+
+```bash
+docker run -d --name encuentraepn -p 8080:8080 joelalexanderp/encuentraepn:1.0
+```
+
+Luego abrir <http://localhost:8080/>. La aplicación arranca con la base de datos vacía (solo con las categorías). Para conservar los datos aunque se borre el contenedor, agregar un volumen: `-v encuentraepn-datos:/root/gr05_1bpr1`.
+
+Para construir la imagen desde el código: `docker build -t encuentraepn .` y luego `docker run -d -p 8080:8080 encuentraepn`. Para detener y borrar el contenedor: `docker rm -f encuentraepn`.
+
+## Integración continua con Jenkins en Docker
+
+La imagen [joelalexanderp/gr05-jenkins](https://hub.docker.com/r/joelalexanderp/gr05-jenkins) es la oficial `jenkins/jenkins:lts-jdk21` con los plugins (`jenkins/plugins.txt`) y la configuración como código (`jenkins/casc.yaml`): el usuario `admin` y la tarea Pipeline `GR05_1BPR1_622_26B`, que toma el `Jenkinsfile` de la rama `main` de este repositorio. No necesita credenciales porque el repositorio es público.
+
+```bash
+docker run -d --name jenkins-gr05 -p 8090:8080 -v jenkins-gr05-home:/var/jenkins_home -e JENKINS_ADMIN_PASSWORD=<clave> joelalexanderp/gr05-jenkins:1.0
+```
+
+Luego abrir <http://localhost:8090/>. El pipeline revisa el repositorio cada 2 minutos y, si hay commits nuevos, ejecuta las etapas **Compilación**, **Pruebas unitarias** (con el reporte de JUnit) y **Empaquetado** (el WAR queda como artefacto).
+
+## Cómo ejecutar sin Docker
 
 Solo se necesita Java 17 o superior. Maven y Tomcat se descargan automáticamente la primera vez.
 
@@ -83,6 +112,29 @@ cd pruebas
 npm install puppeteer-core
 node casos-de-prueba.js capturas
 ```
+
+`pruebas/casos-incremento-4.js` comprueba los nueve escenarios de las historias del Incremento 4 (CP-06 a CP-08) con datos de ejemplo. Con la aplicación recién iniciada en Docker: `node casos-incremento-4.js capturas http://localhost:8080`.
+
+## Incremento 4: Programación Extrema (Prueba 1)
+
+Tres historias de usuario nuevas, planificadas en [`docs/historias`](docs/historias), desarrolladas con TDD e integradas con Jenkins:
+
+| Historia | Qué hace |
+|---|---|
+| HU-11 Retirar un reporte propio | En «Mis reportes», el autor retira un reporte activo: deja de aparecer en el mapa y sus reclamaciones pendientes quedan rechazadas |
+| HU-12 Buscar reportes por palabra clave | El mapa tiene un buscador que no distingue mayúsculas, tildes ni espacios sobrantes y se combina con los demás filtros |
+| HU-13 Ver estadísticas de los objetos reportados | Página con la cantidad de reportes por categoría y por zona, de mayor a menor |
+
+Cada prueba tiene sus commits `TDD n · Rojo`, `TDD n · Verde` y, cuando hizo falta, `TDD n · Refactor`:
+
+| N.º | Historia | Tipo | Prueba | Refactorización |
+|---|---|---|---|---|
+| 1 | HU-11 | Unitaria | `ReporteTest`: retirar un reporte activo lo deja RETIRADO | — |
+| 2 | HU-11 | Unitaria | `ReporteTest`: un reporte reservado no se puede retirar | Extract Method (`cambiarEstado`) |
+| 3 | HU-11 | Con mocks (Mockito) | `ControlRegistroReporteTest`: retirar rechaza las reclamaciones pendientes y guarda | Replace Magic Literal (`MOTIVO_RETIRO`) |
+| 4 | HU-12 | Unitaria | `ReporteTest`: una palabra de la descripción coincide y otra no | — |
+| 5 | HU-12 | Con parámetros | `ReporteTest`: la búsqueda no distingue mayúsculas, tildes ni espacios | Replace Temp with Query (`normalizar`) |
+| 6 | HU-13 | Unitaria | `EstadisticasReportesTest`: cuenta por categoría y por zona | Parameterize Method (`contarPor`) |
 
 ## Incremento 3: rechazar una reclamación (TDD, Práctica 2)
 
