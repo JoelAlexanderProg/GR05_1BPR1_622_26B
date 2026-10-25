@@ -169,5 +169,4 @@ Maven ejecuta todas las pruebas de `src/test/java` y al final muestra cuántas p
 - Lenin Alejandro Jerez Chimbo
 - Dylan Isaí Maldonado Morales
 - Joel Alexander Places Lucero
-- Jeimy Jhair Sánchez Tixe
 - Francisco Gabriel Villalba Portilla
