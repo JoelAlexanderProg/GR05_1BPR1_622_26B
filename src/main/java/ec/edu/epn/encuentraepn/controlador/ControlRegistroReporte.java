@@ -25,9 +25,9 @@ import java.util.UUID;
 /**
  * CU-01 Registrar objeto perdido o encontrado.
  * Diagrama de clases: «control» ControlRegistroReporte. Vista: formularioReporte.jsp («boundary» FormularioReporte).
- * Diagrama de secuencia: SEC-01.
+ * Diagrama de secuencia: SEC-01. También permite a su autor retirar un reporte (HU-11).
  */
-@WebServlet("/reportes/nuevo")
+@WebServlet({"/reportes/nuevo", "/reportes/retirar"})
 public class ControlRegistroReporte extends ControlBase {
 
     /** Motivo con el que se rechazan las reclamaciones pendientes de un reporte retirado (HU-11). */
@@ -64,6 +64,16 @@ public class ControlRegistroReporte extends ControlBase {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if ("/reportes/retirar".equals(request.getServletPath())) {
+            // HU-11: retirarReporte(actor, id); la regla de la entidad se muestra como error
+            try {
+                retirarReporte(actorIdentificado(request), leerId(request, "id"));
+            } catch (IllegalStateException e) {
+                throw new OperacionInvalidaException("Solo se puede retirar un reporte activo.");
+            }
+            redirigir(request, response, "/inicio?retirado");
+            return;
+        }
         // SEC-01 · 3: solicitarPublicacion(datos)
         DatosReporte datos = leerDatos(request);
         try {

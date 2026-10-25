@@ -291,6 +291,19 @@ td.enlaces a {
     margin-right: 12px;
 }
 
+td.enlaces form {
+    display: inline;
+}
+
+.boton-enlace {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #b3261e;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 @media (max-width: 760px) {
     .dos-columnas {
         grid-template-columns: 1fr;

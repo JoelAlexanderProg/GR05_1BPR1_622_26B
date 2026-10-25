@@ -13,6 +13,9 @@
 
 <c:if test="${not empty sessionScope.usuario}">
     <h2>Mis reportes</h2>
+    <c:if test="${param.retirado != null}">
+        <p class="exito" id="retirado">El reporte se retiró y ya no aparece en el mapa. Sus reclamaciones pendientes quedaron rechazadas.</p>
+    </c:if>
     <c:choose>
         <c:when test="${empty misReportes}">
             <p class="vacio">Todavía no ha registrado reportes.</p>
@@ -33,6 +36,14 @@
                             <a href="${ctx}/reportes/detalle?id=${reporte.id}">Detalle</a>
                             <c:if test="${reporte.esEncontrado()}">
                                 <a href="${ctx}/devoluciones?reporte=${reporte.id}">Reclamaciones</a>
+                            </c:if>
+                            <%-- HU-11: solo los reportes activos se pueden retirar --%>
+                            <c:if test="${reporte.estaActivo()}">
+                                <form method="post" action="${ctx}/reportes/retirar"
+                                      onsubmit="return confirm('¿Retirar este reporte? Dejará de aparecer en el mapa.')">
+                                    <input type="hidden" name="id" value="${reporte.id}">
+                                    <button type="submit" class="boton-enlace">Retirar</button>
+                                </form>
                             </c:if>
                         </td>
                     </tr>
