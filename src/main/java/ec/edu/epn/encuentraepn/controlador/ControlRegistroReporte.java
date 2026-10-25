@@ -6,6 +6,7 @@ import ec.edu.epn.encuentraepn.dao.ReporteDAO;
 import ec.edu.epn.encuentraepn.modelo.Campus;
 import ec.edu.epn.encuentraepn.modelo.Categoria;
 import ec.edu.epn.encuentraepn.modelo.DatosReporte;
+import ec.edu.epn.encuentraepn.modelo.Reclamacion;
 import ec.edu.epn.encuentraepn.modelo.Reporte;
 import ec.edu.epn.encuentraepn.modelo.TipoReporte;
 import ec.edu.epn.encuentraepn.modelo.Ubicacion;
@@ -110,6 +111,16 @@ public class ControlRegistroReporte extends ControlBase {
      * HU-11: quien registró el reporte lo retira. Sus reclamaciones pendientes quedan rechazadas.
      */
     public void retirarReporte(Usuario actor, UUID reporteId) {
+        Reporte reporte = reporteDAO.buscarPorId(reporteId);
+        if (reporte == null || !reporte.esAutor(actor)) {
+            throw new OperacionInvalidaException("Solo quien registró el reporte puede retirarlo.");
+        }
+        reporte.retirar();
+        for (Reclamacion reclamacion : reclamacionDAO.listarPendientes(reporte)) {
+            reclamacion.rechazar("El reporte fue retirado por su autor.");
+        }
+        // El retiro y los rechazos se guardan en una sola transacción
+        reporteDAO.actualizar(reporte);
     }
 
     private void validarCampos(DatosReporte datos) {
