@@ -13,11 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -106,7 +108,11 @@ public class Reporte {
      * HU-12: indica si la descripción del reporte contiene la palabra buscada.
      */
     public boolean contienePalabra(String palabra) {
-        return descripcionPublica.contains(palabra);
+        String descripcion = Normalizer.normalize(descripcionPublica.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
+        String buscada = Normalizer.normalize(palabra.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
+        return descripcion.contains(buscada);
     }
 
     /**
