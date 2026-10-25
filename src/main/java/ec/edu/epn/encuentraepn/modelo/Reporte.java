@@ -102,6 +102,7 @@ public class Reporte {
      * HU-11: quien registró el reporte lo retira y deja de aparecer en el mapa.
      */
     public void retirar() {
+        exigirEstado(EstadoReporte.ACTIVO);
         estado = EstadoReporte.RETIRADO;
     }
 
