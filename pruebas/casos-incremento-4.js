@@ -162,6 +162,15 @@ const descripcionesEnMapa = (page) => page.$$eval('#resultados li a', (enlaces) 
   await identificar(a, ANDREA);
   await identificar(b, BRUNO);
 
+  // ------------------------------------------------------------------ CP-08 · HU-13 (escenario 3, base vacía)
+  if (!SOLO_DATOS) {
+    caso('CP-08', 'HU-13 Ver estadísticas de los objetos reportados');
+    await ir(a, '/estadisticas');
+    await captura(a, 'cp08-3-sin-reportes.png');
+    paso(3, 'Sin reportes se muestra «Todavía no hay reportes registrados.»',
+      (await textoDe(a, '#sinReportes')) === 'Todavía no hay reportes registrados.');
+  }
+
   // Datos de ejemplo: cinco reportes; Andrea reclama la mochila y la calculadora; Bruno acepta la de la calculadora
   for (const reporte of REPORTES) {
     await registrarReporte(reporte.autor === 'a' ? a : b, reporte);
@@ -176,6 +185,17 @@ const descripcionesEnMapa = (page) => page.$$eval('#resultados li a', (enlaces) 
     await navegador.close();
     return;
   }
+
+  // ------------------------------------------------------------------ CP-08 · HU-13 (escenarios 1 y 2)
+  await ir(a, '/estadisticas');
+  const filas = (tabla) => a.$$eval(`${tabla} tbody tr`, (trs) => trs.map((f) => f.innerText.replace(/\s+/g, ' ').trim()));
+  const categorias = await filas('#porCategoria');
+  const zonas = await filas('#porZona');
+  await captura(a, 'cp08-1-estadisticas.png');
+  paso(1, 'Por categoría, «Electrónicos: 2» aparece antes que «Llaves: 1»',
+    categorias[0] === 'Electrónicos 2' && categorias.indexOf('Llaves 1') > 0);
+  paso(2, 'Por zona, «Centro: 3» aparece antes que «Norte: 1»',
+    zonas[0] === 'Centro 3' && zonas.indexOf('Norte 1') > 0);
 
   // ------------------------------------------------------------------ CP-07 · HU-12
   caso('CP-07', 'HU-12 Buscar reportes por palabra clave');

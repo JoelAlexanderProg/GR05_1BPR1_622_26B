@@ -15,6 +15,7 @@
     <nav>
         <a href="${ctx}/reportes">Mapa de reportes</a>
         <a href="${ctx}/reportes/nuevo">Registrar reporte</a>
+        <a href="${ctx}/estadisticas">Estadísticas</a>
     </nav>
     <div class="sesion">
         <c:choose>

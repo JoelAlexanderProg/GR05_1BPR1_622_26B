@@ -17,6 +17,10 @@ public class EstadisticasReportes {
         this.reportes = reportes;
     }
 
+    public int total() {
+        return reportes.size();
+    }
+
     public Map<String, Long> porCategoria() {
         return contarPor(reporte -> reporte.getCategoria().getNombre());
     }

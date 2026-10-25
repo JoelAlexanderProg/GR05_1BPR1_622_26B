@@ -36,6 +36,13 @@ public class ReporteDAO extends GenericDAO<Reporte> {
                 .getResultList();
     }
 
+    /**
+     * HU-13: todos los reportes registrados, en cualquier estado, para las estadísticas.
+     */
+    public List<Reporte> listarTodos() {
+        return em().createQuery("SELECT r FROM Reporte r", Reporte.class).getResultList();
+    }
+
     public List<Reporte> listarPorAutor(Usuario autor) {
         return em()
                 .createQuery("SELECT r FROM Reporte r WHERE r.autor = :autor ORDER BY r.fechaSuceso DESC", Reporte.class)
