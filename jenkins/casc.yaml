@@ -16,6 +16,9 @@ jenkins:
 unclassified:
   location:
     url: "http://localhost:8090/"
+  scmGit:
+    # Cada persona se identifica por su correo y se muestra con su nombre en los cambios de cada ejecución
+    createAccountBasedOnEmail: true
 
 # Tarea Pipeline del proyecto: toma el Jenkinsfile del repositorio público (rama main)
 jobs:
@@ -39,6 +42,11 @@ jobs:
                   url('https://github.com/JoelAlexanderProg/GR05_1BPR1_622_26B.git')
                 }
                 branch('*/main')
+                extensions {
+                  // Los cambios muestran al autor del commit (en los commits hechos desde la web de GitHub,
+                  // el committer es «GitHub»)
+                  authorInChangelog()
+                }
               }
             }
             scriptPath('Jenkinsfile')
