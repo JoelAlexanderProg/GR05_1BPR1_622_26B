@@ -1,6 +1,7 @@
 package ec.edu.epn.encuentraepn.controlador;
 
 import ec.edu.epn.encuentraepn.dao.CategoriaDAO;
+import ec.edu.epn.encuentraepn.dao.ReclamacionDAO;
 import ec.edu.epn.encuentraepn.dao.ReporteDAO;
 import ec.edu.epn.encuentraepn.modelo.Campus;
 import ec.edu.epn.encuentraepn.modelo.Categoria;
@@ -28,8 +29,22 @@ import java.util.UUID;
 @WebServlet("/reportes/nuevo")
 public class ControlRegistroReporte extends ControlBase {
 
-    private final ReporteDAO reporteDAO = new ReporteDAO();
+    private final ReporteDAO reporteDAO;
     private final CategoriaDAO categoriaDAO = new CategoriaDAO();
+    private final ReclamacionDAO reclamacionDAO;
+
+    public ControlRegistroReporte() {
+        this(new ReporteDAO(), new ReclamacionDAO());
+    }
+
+    /**
+     * Recibe el acceso a datos de los reportes y de las reclamaciones, para que una prueba pueda
+     * reemplazarlos por objetos simulados.
+     */
+    ControlRegistroReporte(ReporteDAO reporteDAO, ReclamacionDAO reclamacionDAO) {
+        this.reporteDAO = reporteDAO;
+        this.reclamacionDAO = reclamacionDAO;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -89,6 +104,12 @@ public class ControlRegistroReporte extends ControlBase {
 
         // Nota de SEC-01: el registro conserva el reporte y sus preguntas
         return reporteDAO.guardar(reporte);
+    }
+
+    /**
+     * HU-11: quien registró el reporte lo retira. Sus reclamaciones pendientes quedan rechazadas.
+     */
+    public void retirarReporte(Usuario actor, UUID reporteId) {
     }
 
     private void validarCampos(DatosReporte datos) {
