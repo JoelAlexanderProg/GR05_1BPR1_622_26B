@@ -108,11 +108,15 @@ public class Reporte {
      * HU-12: indica si la descripción del reporte contiene la palabra buscada.
      */
     public boolean contienePalabra(String palabra) {
-        String descripcion = Normalizer.normalize(descripcionPublica.trim(), Normalizer.Form.NFD)
+        return normalizar(descripcionPublica).contains(normalizar(palabra));
+    }
+
+    /**
+     * Texto en minúsculas, sin tildes y sin espacios al inicio ni al final, para comparar búsquedas.
+     */
+    private static String normalizar(String texto) {
+        return Normalizer.normalize(texto.trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
-        String buscada = Normalizer.normalize(palabra.trim(), Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
-        return descripcion.contains(buscada);
     }
 
     /**
