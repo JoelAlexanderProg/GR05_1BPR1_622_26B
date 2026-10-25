@@ -81,20 +81,17 @@ public class Reporte {
 
     // SEC-01 · 10: publicar()
     public void publicar() {
-        exigirEstado(EstadoReporte.BORRADOR);
-        estado = EstadoReporte.ACTIVO;
+        cambiarEstado(EstadoReporte.BORRADOR, EstadoReporte.ACTIVO);
     }
 
     // SEC-04 · 18: reservar()
     public void reservar() {
-        exigirEstado(EstadoReporte.ACTIVO);
-        estado = EstadoReporte.RESERVADO;
+        cambiarEstado(EstadoReporte.ACTIVO, EstadoReporte.RESERVADO);
     }
 
     // SEC-04 · 40: marcarEntregado(fecha)
     public void marcarEntregado(LocalDateTime fecha) {
-        exigirEstado(EstadoReporte.RESERVADO);
-        estado = EstadoReporte.ENTREGADO;
+        cambiarEstado(EstadoReporte.RESERVADO, EstadoReporte.ENTREGADO);
         fechaDevolucion = fecha;
     }
 
@@ -102,8 +99,15 @@ public class Reporte {
      * HU-11: quien registró el reporte lo retira y deja de aparecer en el mapa.
      */
     public void retirar() {
-        exigirEstado(EstadoReporte.ACTIVO);
-        estado = EstadoReporte.RETIRADO;
+        cambiarEstado(EstadoReporte.ACTIVO, EstadoReporte.RETIRADO);
+    }
+
+    /**
+     * Pasa del estado esperado al nuevo. Si el reporte está en otro estado, lanza IllegalStateException.
+     */
+    private void cambiarEstado(EstadoReporte desde, EstadoReporte hacia) {
+        exigirEstado(desde);
+        estado = hacia;
     }
 
     private void exigirEstado(EstadoReporte esperado) {
