@@ -106,7 +106,7 @@ public class Reporte {
      * HU-12: indica si la descripción del reporte contiene la palabra buscada.
      */
     public boolean contienePalabra(String palabra) {
-        return false;
+        return descripcionPublica.contains(palabra);
     }
 
     /**
